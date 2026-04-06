@@ -1,2 +1,13 @@
 # CEF440_2026_Group13
 This is the Repository for the course : CEF440: Internet Programming and Mobile Programming
+
+GROUP 13 members:
+1.AYUK AMELIA AGBOR OROCK
+
+2.IMELE AZAFA JOSE DE KAJOS
+
+3.NGOME FERNANDEZ MANYAKA
+
+4.TADJEU NGNINTEDEM AUBRY-JUNEX
+
+5.BESSONG TAKANG TABOT WILLY
