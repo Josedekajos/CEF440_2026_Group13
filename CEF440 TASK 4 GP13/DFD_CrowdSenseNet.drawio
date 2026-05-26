@@ -1,0 +1,109 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/26.0.4 Chrome/128.0.6613.186 Electron/32.2.5 Safari/537.36" version="26.0.4">
+  <diagram id="Uhmu18O2YULxdDzPn0gU" name="Page-1">
+    <mxGraphModel dx="1050" dy="621" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1654" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="user" value="&lt;span&gt;User&lt;/span&gt;&#xa;Smartphone Owner" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e3a5f;strokeColor=light-dark(#131010, #4c89ec);fontColor=#93c5fd;strokeWidth=2;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="20" y="80" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="neteng" value="&lt;span&gt;Network&lt;/span&gt;&#xa;&lt;span&gt;Engineer&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e3a5f;strokeColor=light-dark(#131010, #4c89ec);fontColor=#93c5fd;strokeWidth=2;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="1280" y="130" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="android_hw" value="&lt;span&gt;Android&lt;/span&gt;&#xa;&lt;span&gt;Hardware&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e3a5f;strokeColor=light-dark(#131010, #4c89ec);fontColor=#93c5fd;strokeWidth=2;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="20" y="600" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="backend_srv" value="&lt;span&gt;Backend&lt;/span&gt;&#xa;&lt;span&gt;Server&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e3a5f;strokeColor=light-dark(#131010, #4c89ec);fontColor=#93c5fd;strokeWidth=2;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="1300" y="600" width="130" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ml_server" value="ML Analytics&#xa;(Future Phase)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#292524;strokeColor=light-dark(#131010, #4c89ec);fontColor=#78716c;strokeWidth=2;dashed=1;dashPattern=5 3;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="630" y="850" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d1" value="D1 | Local DB (Room)&#xa;SQLite · 50MB cap" style="shape=mxgraph.flowchart.stored_data;whiteSpace=wrap;html=1;fillColor=#1c1917;strokeColor=light-dark(#131010, #4c89ec);fontColor=#fcd34d;strokeWidth=2;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="100" y="430" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d2" value="D2 | PostgreSQL/PostGIS&#xa;Geospatial DB" style="shape=mxgraph.flowchart.stored_data;whiteSpace=wrap;html=1;fillColor=#1c1917;strokeColor=light-dark(#131010, #4c89ec);fontColor=#fcd34d;strokeWidth=2;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="1290" y="430" width="165" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="d3" value="D3 | Local Prefs&#xa;Encrypted UUID store" style="shape=mxgraph.flowchart.stored_data;whiteSpace=wrap;html=1;fillColor=#1c1917;strokeColor=light-dark(#131010, #4c89ec);fontColor=#fcd34d;strokeWidth=2;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="230" y="160" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="p1" value="&lt;font color=&quot;#6ee7b7&quot;&gt;P1.0&lt;/font&gt;&#xa;&lt;span&gt;User Consent&lt;/span&gt;&#xa;&lt;font color=&quot;#a7f3d0&quot;&gt;&amp;amp; Onboarding&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=light-dark(#131010, #4c89ec);fontColor=#d1fae5;strokeWidth=2;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="235" y="10" width="155" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p2" value="&lt;font color=&quot;#6ee7b7&quot;&gt;P2.0&lt;/font&gt;&#xa;&lt;span&gt;Signal Data&lt;/span&gt;&#xa;&lt;font color=&quot;#a7f3d0&quot;&gt;Collection&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=light-dark(#131010, #4c89ec);fontColor=#d1fae5;strokeWidth=2;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="400" y="200" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p3" value="&lt;font color=&quot;#6ee7b7&quot;&gt;P3.0&lt;/font&gt;&#xa;&lt;span&gt;Local Storage&lt;/span&gt;&#xa;&lt;font color=&quot;#a7f3d0&quot;&gt;Management&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=light-dark(#131010, #4c89ec);fontColor=#d1fae5;strokeWidth=2;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="230" y="320" width="155" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p4" value="&lt;font color=&quot;#6ee7b7&quot;&gt;P4.0&lt;/font&gt;&#xa;&lt;span&gt;Data Upload&lt;/span&gt;&#xa;&lt;font color=&quot;#a7f3d0&quot;&gt;&amp;amp; Sync&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=light-dark(#131010, #4c89ec);fontColor=#d1fae5;strokeWidth=2;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="510" y="470" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p5" value="&lt;font color=&quot;#6ee7b7&quot;&gt;P5.0&lt;/font&gt;&#xa;&lt;span&gt;Backend&lt;/span&gt;&#xa;&lt;font color=&quot;#a7f3d0&quot;&gt;Validation&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=light-dark(#131010, #4c89ec);fontColor=#d1fae5;strokeWidth=2;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="900" y="270" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p6" value="&lt;font color=&quot;#6ee7b7&quot;&gt;P6.0&lt;/font&gt;&#xa;&lt;span&gt;Coverage Map&lt;/span&gt;&#xa;&lt;font color=&quot;#a7f3d0&quot;&gt;Generation&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=light-dark(#131010, #4c89ec);fontColor=#d1fae5;strokeWidth=2;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="1010" y="545" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="p7" value="&lt;font color=&quot;#78716c&quot;&gt;P7.0&lt;/font&gt;&#xa;&lt;font color=&quot;#78716c&quot;&gt;ML Coverage&lt;/font&gt;&#xa;&lt;font color=&quot;#57534e&quot;&gt;Prediction&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1c1917;strokeColor=light-dark(#131010, #4c89ec);fontColor=#78716c;strokeWidth=2;dashed=1;dashPattern=5 3;fontSize=13;fontStyle=1" parent="1" vertex="1">
+          <mxGeometry x="630" y="650" width="170" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="e1" value="consent" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#94a3b8;fontSize=13;strokeWidth=2;fontStyle=1" parent="1" source="user" target="p1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e2" value="UUID" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#94a3b8;fontSize=13;strokeWidth=2;fontStyle=1" parent="1" source="p1" target="d3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e3" value="on/off toggle" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#94a3b8;fontSize=13;strokeWidth=2;fontStyle=1" parent="1" source="user" target="p4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e4" value="filtered reading" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#94a3b8;fontSize=13;strokeWidth=2;fontStyle=1" parent="1" source="p2" target="p3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5" value="read/write" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#94a3b8;fontSize=13;strokeWidth=2;fontStyle=1" parent="1" source="p3" target="d1" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e5b" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);strokeWidth=2;fontStyle=1;fontSize=13;" parent="1" source="d1" target="p3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e6" value="unsynced readings" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#94a3b8;fontSize=13;strokeWidth=2;fontStyle=1" parent="1" source="d1" target="p4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e7" value="HTTPS/TLS 1.2" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#94a3b8;fontSize=13;dashed=1;dashPattern=6 3;strokeWidth=2;fontStyle=1" parent="1" source="p4" target="p5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e8" value="ack" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#64748b;fontSize=13;dashed=1;dashPattern=4 3;strokeWidth=2;fontStyle=1" parent="1" source="p5" target="p4" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e9" value="upload notification" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#64748b;fontSize=13;dashed=1;dashPattern=4 3;strokeWidth=2;fontStyle=1" parent="1" source="p4" target="user" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10" value="validated" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#94a3b8;fontSize=13;strokeWidth=2;fontStyle=1" parent="1" source="p5" target="d2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e10b" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);strokeWidth=2;fontStyle=1;fontSize=13;" parent="1" source="d2" target="p5" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e11" value="query" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#94a3b8;fontSize=13;strokeWidth=2;fontStyle=1" parent="1" source="d2" target="p6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e12" value="GeoJSON" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#94a3b8;fontSize=13;strokeWidth=2;fontStyle=1" parent="1" source="p6" target="backend_srv" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e13" value="map request" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#64748b;fontSize=13;dashed=1;dashPattern=4 3;strokeWidth=2;fontStyle=1" parent="1" source="neteng" target="p6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e14" value="RSRP/RSRQ/SINR" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#94a3b8;fontSize=13;strokeWidth=2;fontStyle=1" parent="1" source="android_hw" target="p2" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e15" value="GPS fix" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#64748b;fontSize=13;dashed=1;dashPattern=4 3;strokeWidth=2;fontStyle=1" parent="1" source="p2" target="android_hw" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="e16" value="predictions" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=light-dark(#131010, #4c89ec);fontColor=#57534e;fontSize=13;dashed=1;dashPattern=5 4;strokeWidth=2;fontStyle=1" parent="1" source="p7" target="p6" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
