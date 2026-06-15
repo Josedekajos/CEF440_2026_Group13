@@ -1,6 +1,0 @@
-{
-  "name": "CrowdSenseNet Mobile Portal",
-  "description": "An interactive Jetpack Compose mobile app simulator and Kotlin MVVM source explorer for Crowdsensed Coverage Prediction.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
-}
