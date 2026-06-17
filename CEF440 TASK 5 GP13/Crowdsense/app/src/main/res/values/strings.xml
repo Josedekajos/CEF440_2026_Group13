@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">CrowdSense</string>
+    <string name="tagline">
+        Your phone. Your network. Your map.
+    </string>
+    <string name="onboarding_description">
+        Help map mobile network coverage across Cameroon.
+        Your phone quietly collects signal data as you move.
+        Your data is completely anonymous.
+    </string>
+    <string name="btn_get_started">Allow &amp; Get Started</string>
+    <string name="sensing_on">SENSING ON</string>
+    <string name="sensing_off">SENSING OFF</string>
+    <string name="start_sensing">Start Sensing</string>
+    <string name="stop_sensing">Stop Sensing</string>
+    <string name="tap_to_stop">TAP TO STOP SENSING</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_stats">Stats</string>
+    <string name="nav_uploads">Uploads</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Dashboard -->
+    <string name="sensing_status_label">Sensing Status: %1$s</string>
+    <string name="network_info_format">%1$s — %2$s</string>
+    <string name="gps_status_label">GPS Status: %1$s</string>
+    <string name="gps_active">Active</string>
+    <string name="gps_inactive">Inactive</string>
+    <string name="acquiring_location">Acquiring location&#8230;</string>
+    <string name="cd_fab_sensing">Toggle background sensing</string>
+
+    <!-- Metrics -->
+    <string name="rsrp_label">RSRP: %1$s</string>
+    <string name="rsrq_label">RSRQ: %1$s</string>
+    <string name="sinr_label">SINR: %1$s</string>
+    <string name="rssi_label">RSSI: %1$s</string>
+    <string name="cell_id_label">Cell ID: %1$s</string>
+    <string name="network_type_label">Network: %1$s</string>
+    <string name="lat_label">Lat: %1$s</string>
+    <string name="lng_label">Lng: %1$s</string>
+    <string name="no_gps">No GPS</string>
+
+    <!-- Uploads -->
+    <string name="pending_uploads">Pending: %1$d</string>
+    <string name="synced_uploads">Uploaded: %1$d</string>
+    <string name="btn_upload_now">Upload Now</string>
+    <string name="status_uploading">Uploading&#8230;</string>
+    <string name="status_upload_complete">Upload complete</string>
+
+    <!-- Settings -->
+    <string name="sampling_interval_label">Sampling Interval</string>
+    <string name="background_logging">Background Logging</string>
+    <string name="wifi_only">WiFi Only</string>
+    <string name="btn_test_connection">Test Connection</string>
+    <string name="status_testing">Testing&#8230;</string>
+    <string name="connection_success">Connection Successful ✓</string>
+</resources>
