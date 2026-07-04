@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:height="240dp"
+    android:viewportWidth="200"
+    android:viewportHeight="240">
+
+    <!-- Signal Arcs -->
+    <path
+        android:pathData="M70,40 Q100,10 130,40"
+        android:strokeWidth="6"
+        android:strokeColor="#1565C0"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M60,25 Q100,-10 140,25"
+        android:strokeWidth="6"
+        android:strokeColor="#42A5F5"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M80,55 Q100,35 120,55"
+        android:strokeWidth="6"
+        android:strokeColor="#0D47A1"
+        android:strokeLineCap="round" />
+
+    <!-- Pin Body -->
+    <path
+        android:pathData="M100,230 C100,230 40,160 40,110 C40,76.86 66.86,50 100,50 C133.14,50 160,76.86 160,110 C160,160 100,230 100,230 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="100"
+                android:startY="50"
+                android:endX="100"
+                android:endY="230"
+                android:type="linear">
+                <item android:offset="0" android:color="#42A5F5" />
+                <item android:offset="1" android:color="#1565C0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- White Center Circle -->
+    <path
+        android:pathData="M100,110m-35,0a35,35 0,1 1,70 0a35,35 0,1 1,-70 0"
+        android:fillColor="#FFFFFF" />
+
+    <!-- Network Mesh (Dots) -->
+    <path android:pathData="M100,90m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0" android:fillColor="#1565C0" />
+    <path android:pathData="M85,110m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0" android:fillColor="#1565C0" />
+    <path android:pathData="M115,110m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0" android:fillColor="#1565C0" />
+    <path android:pathData="M100,130m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0" android:fillColor="#1565C0" />
+    <path android:pathData="M120,95m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" android:fillColor="#42A5F5" />
+    <path android:pathData="M80,125m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" android:fillColor="#42A5F5" />
+
+    <!-- Network Mesh (Lines) -->
+    <path android:pathData="M100,90 L85,110 M100,90 L115,110 M85,110 L100,130 M115,110 L100,130 M85,110 L115,110 M100,90 L120,95 M120,95 L115,110 M85,110 L80,125 M80,125 L100,130"
+        android:strokeWidth="1.5"
+        android:strokeColor="#1565C0" />
+
+</vector>
