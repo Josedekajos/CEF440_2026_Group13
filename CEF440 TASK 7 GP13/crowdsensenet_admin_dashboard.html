@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CrowdSenseNet — Admin Console</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{
+  --bg:#0A0E13;
+  --panel:#121822;
+  --panel-2:#161D28;
+  --border:#232D3A;
+  --text:#E7EDF4;
+  --muted:#7C8B9C;
+  --muted-2:#57677A;
+  --accent:#3DA0FF;
+  --accent-dim:#1E4A73;
+  --good:#33C77E;
+  --good-dim:#123322;
+  --avg:#F2B84B;
+  --avg-dim:#3A2E14;
+  --poor:#F0554F;
+  --poor-dim:#3A1917;
+  --grey:#5B6B7C;
+  --grey-dim:#20262E;
+  --radius:10px;
+  --mono:'JetBrains Mono', monospace;
+  --disp:'Space Grotesk', sans-serif;
+  --body:'Inter', sans-serif;
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--body);
+  font-size:14px;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+::selection{background:var(--accent-dim); color:#fff;}
+a{color:inherit; text-decoration:none;}
+button{font-family:var(--body); cursor:pointer;}
+
+/* ---------- Signal mark (signature element) ---------- */
+.signal-mark{display:inline-flex; align-items:flex-end; gap:2px; height:16px;}
+.signal-mark i{display:block; width:3px; border-radius:1px; background:var(--accent);}
+.signal-mark i:nth-child(1){height:5px;}
+.signal-mark i:nth-child(2){height:9px;}
+.signal-mark i:nth-child(3){height:13px;}
+.signal-mark i:nth-child(4){height:17px; margin-bottom:-1px;}
+
+/* ---------- Login screen ---------- */
+#login-screen{
+  position:fixed; inset:0; z-index:100;
+  display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(circle at 30% 20%, #101823 0%, #060A0F 70%);
+}
+.login-noise{position:absolute; inset:0; pointer-events:none;
+  background-image: radial-gradient(circle, rgba(61,160,255,0.05) 1px, transparent 1px);
+  background-size: 22px 22px; opacity:0.5;}
+.login-card{
+  position:relative; width:380px; background:var(--panel);
+  border:1px solid var(--border); border-radius:14px; padding:36px 32px;
+  box-shadow:0 30px 80px rgba(0,0,0,0.5);
+}
+.login-brand{display:flex; align-items:center; gap:10px; margin-bottom:6px;}
+.login-brand .signal-mark i{background:var(--accent);}
+.login-brand span{font-family:var(--disp); font-weight:700; font-size:19px; letter-spacing:-0.02em;}
+.login-sub{color:var(--muted); font-size:12.5px; margin-bottom:26px; letter-spacing:0.01em;}
+.field{margin-bottom:16px;}
+.field label{display:block; font-size:11.5px; color:var(--muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em;}
+.field input, .field select{
+  width:100%; background:var(--panel-2); border:1px solid var(--border); color:var(--text);
+  padding:11px 12px; border-radius:8px; font-size:13.5px; font-family:var(--body);
+}
+.field input:focus, .field select:focus{outline:none; border-color:var(--accent);}
+.role-note{display:flex; gap:14px; margin:18px 0 22px; font-size:11.5px; color:var(--muted-2);}
+.role-note b{color:var(--text); font-weight:600;}
+.btn-primary{
+  width:100%; background:var(--accent); color:#04101C; border:none; font-weight:600;
+  padding:12px; border-radius:8px; font-size:13.5px; transition:filter .15s;
+}
+.btn-primary:hover{filter:brightness(1.08);}
+.login-foot{margin-top:18px; text-align:center; font-size:11px; color:var(--muted-2);}
+
+/* ---------- Shell layout ---------- */
+#app-shell{display:none; min-height:100vh; grid-template-columns:220px 1fr;}
+#app-shell.active{display:grid;}
+.sidebar{
+  background:#0D131B; border-right:1px solid var(--border);
+  display:flex; flex-direction:column; padding:20px 14px; position:sticky; top:0; height:100vh;
+}
+.brand{display:flex; align-items:center; gap:9px; padding:4px 8px 22px;}
+.brand span{font-family:var(--disp); font-weight:700; font-size:15.5px; letter-spacing:-0.02em;}
+.nav-group-label{font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:var(--muted-2); padding:14px 10px 6px;}
+.nav-item{
+  display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:8px; color:var(--muted);
+  font-size:13px; font-weight:500; margin-bottom:2px; transition:background .12s, color .12s;
+}
+.nav-item:hover{background:var(--panel-2); color:var(--text);}
+.nav-item.active{background:var(--accent-dim); color:#CFE8FF;}
+.nav-item .dot{width:6px; height:6px; border-radius:50%; background:currentColor; opacity:0.55; flex-shrink:0;}
+.sidebar-foot{margin-top:auto; border-top:1px solid var(--border); padding-top:14px;}
+.acct{display:flex; align-items:center; gap:9px; padding:6px 8px;}
+.acct-avatar{width:30px; height:30px; border-radius:50%; background:linear-gradient(135deg,#3DA0FF,#1E4A73); display:flex; align-items:center; justify-content:center; font-family:var(--disp); font-weight:700; font-size:12px;}
+.acct-name{font-size:12.5px; font-weight:600;}
+.acct-role{font-size:10.5px; color:var(--muted-2);}
+.logout-link{display:block; font-size:11.5px; color:var(--muted-2); padding:10px 8px 0;}
+.logout-link:hover{color:var(--poor);}
+
+.main{padding:22px 30px 50px; max-width:1400px;}
+.topbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:22px;}
+.topbar h1{font-family:var(--disp); font-size:21px; font-weight:600; letter-spacing:-0.01em;}
+.topbar .sub{font-size:12.5px; color:var(--muted); margin-top:3px;}
+.top-right{display:flex; align-items:center; gap:16px;}
+.clock{font-family:var(--mono); font-size:12.5px; color:var(--muted); background:var(--panel); border:1px solid var(--border); padding:6px 11px; border-radius:7px;}
+.badge-role{font-size:11px; padding:5px 10px; border-radius:999px; border:1px solid var(--accent-dim); color:var(--accent); background:rgba(61,160,255,0.08); font-weight:600;}
+
+.view{display:none;}
+.view.active{display:block;}
+
+/* ---------- Cards / grid ---------- */
+.cards-row{display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:20px;}
+.card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:18px 18px;}
+.card .k{font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:var(--muted); margin-bottom:10px;}
+.card .v{font-family:var(--disp); font-size:26px; font-weight:700;}
+.card .d{font-size:11.5px; margin-top:6px; color:var(--muted-2);}
+.card .d.up{color:var(--good);} .card .d.down{color:var(--poor);}
+
+.charts-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+.panel{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:16px 18px;}
+.panel h3{font-size:12.5px; font-weight:600; color:var(--muted); margin-bottom:12px; text-transform:uppercase; letter-spacing:0.04em;}
+.panel canvas{max-height:190px;}
+
+/* ---------- Tables ---------- */
+.table-wrap{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); overflow:hidden;}
+table{width:100%; border-collapse:collapse; font-size:12.5px;}
+thead th{
+  text-align:left; padding:11px 14px; background:var(--panel-2); color:var(--muted);
+  font-size:10.5px; text-transform:uppercase; letter-spacing:0.05em; font-weight:600; border-bottom:1px solid var(--border);
+}
+tbody td{padding:10px 14px; border-bottom:1px solid var(--border); font-family:var(--mono); color:var(--text); font-size:12px;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr{transition:background .15s;}
+tbody tr:hover{background:var(--panel-2); cursor:pointer;}
+.mono-dim{color:var(--muted);}
+
+@keyframes rowIn{ from{background:rgba(61,160,255,0.16); transform:translateY(-4px); opacity:0;} to{background:transparent; transform:translateY(0); opacity:1;} }
+.row-new{animation:rowIn 1.1s ease-out;}
+
+.pill{display:inline-flex; align-items:center; gap:5px; font-family:var(--body); font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px;}
+.pill.good{background:var(--good-dim); color:var(--good);}
+.pill.avg{background:var(--avg-dim); color:var(--avg);}
+.pill.poor{background:var(--poor-dim); color:var(--poor);}
+.pill.grey{background:var(--grey-dim); color:var(--grey);}
+.pill.blue{background:var(--accent-dim); color:var(--accent);}
+
+/* ---------- Live feed header ---------- */
+.feed-toolbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;}
+.feed-toolbar .left{display:flex; align-items:center; gap:12px;}
+.counter-badge{
+  font-family:var(--mono); background:var(--panel-2); border:1px solid var(--border); color:var(--accent);
+  padding:6px 12px; border-radius:7px; font-size:12.5px; display:flex; align-items:center; gap:8px;
+}
+.pulse-dot{width:7px; height:7px; border-radius:50%; background:var(--good); box-shadow:0 0 0 0 rgba(51,199,126,0.6); animation:pulse 1.8s infinite;}
+@keyframes pulse{ 0%{box-shadow:0 0 0 0 rgba(51,199,126,0.55);} 70%{box-shadow:0 0 0 8px rgba(51,199,126,0);} 100%{box-shadow:0 0 0 0 rgba(51,199,126,0);} }
+.btn-ghost{background:var(--panel-2); border:1px solid var(--border); color:var(--text); padding:8px 14px; border-radius:7px; font-size:12.5px; font-weight:500;}
+.btn-ghost:hover{border-color:var(--accent);}
+.btn-ghost.on{color:var(--accent); border-color:var(--accent-dim); background:var(--accent-dim);}
+select.filter-mini{background:var(--panel-2); border:1px solid var(--border); color:var(--text); padding:8px 10px; border-radius:7px; font-size:12.5px;}
+
+/* ---------- Slide-over detail panel ---------- */
+#overlay-mask{position:fixed; inset:0; background:rgba(3,6,10,0.55); z-index:40; display:none;}
+#overlay-mask.show{display:block;}
+#detail-panel{
+  position:fixed; top:0; right:-460px; width:440px; height:100vh; background:var(--panel);
+  border-left:1px solid var(--border); z-index:50; transition:right .28s ease; overflow-y:auto; padding:22px 22px 40px;
+}
+#detail-panel.show{right:0;}
+.detail-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:18px;}
+.detail-head h3{font-family:var(--disp); font-size:16px;}
+.close-x{color:var(--muted); font-size:20px; line-height:1; background:none; border:none;}
+.detail-meta{display:grid; grid-template-columns:1fr 1fr; gap:10px 16px; margin-bottom:20px; font-size:12px;}
+.detail-meta div span{display:block; color:var(--muted-2); font-size:10.5px; text-transform:uppercase; letter-spacing:0.04em; margin-bottom:3px;}
+.reading-item{border:1px solid var(--border); border-radius:8px; padding:11px 13px; margin-bottom:8px; font-family:var(--mono); font-size:11.5px;}
+.reading-item .row1{display:flex; justify-content:space-between; color:var(--text); margin-bottom:4px;}
+.reading-item .row2{color:var(--muted); font-size:11px;}
+
+/* ---------- Explorer ---------- */
+.explorer-grid{display:grid; grid-template-columns:230px 1fr; gap:18px;}
+.filter-panel{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:18px; height:fit-content;}
+.filter-panel h3{font-size:11.5px; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:14px;}
+.filter-field{margin-bottom:14px;}
+.filter-field label{display:block; font-size:11px; color:var(--muted-2); margin-bottom:5px;}
+.filter-field input, .filter-field select{width:100%; background:var(--panel-2); border:1px solid var(--border); color:var(--text); padding:8px 9px; border-radius:6px; font-size:12px;}
+.apply-btn{width:100%; background:var(--accent); color:#04101C; border:none; font-weight:600; padding:9px; border-radius:7px; font-size:12.5px; margin-top:4px;}
+.pagination{display:flex; align-items:center; justify-content:space-between; padding:12px 16px; font-size:12px; color:var(--muted);}
+.pagination .pages{display:flex; gap:6px;}
+.page-btn{width:26px; height:26px; border-radius:6px; border:1px solid var(--border); background:var(--panel-2); color:var(--muted); font-size:11.5px; display:flex; align-items:center; justify-content:center;}
+.page-btn.active{background:var(--accent-dim); color:var(--accent); border-color:var(--accent-dim);}
+
+/* ---------- Coverage map ---------- */
+.map-toolbar{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; flex-wrap:wrap; gap:10px;}
+.metric-toggle{display:flex; background:var(--panel-2); border:1px solid var(--border); border-radius:8px; padding:3px;}
+.metric-toggle button{background:none; border:none; color:var(--muted); font-size:12px; font-weight:600; padding:6px 14px; border-radius:6px;}
+.metric-toggle button.active{background:var(--accent); color:#04101C;}
+.map-shell{position:relative; background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px; display:grid; grid-template-columns:1fr 210px; gap:20px;}
+.map-canvas-wrap{position:relative; display:flex; align-items:center; justify-content:center; min-height:420px;}
+#cm-heatmap{width:100%; height:auto;}
+.map-legend{background:var(--panel-2); border:1px solid var(--border); border-radius:8px; padding:14px; align-self:start;}
+.map-legend h4{font-size:11px; text-transform:uppercase; color:var(--muted); margin-bottom:10px; letter-spacing:0.05em;}
+.legend-row{display:flex; align-items:center; gap:8px; font-size:12px; margin-bottom:8px; color:var(--muted);}
+.legend-swatch{width:12px; height:12px; border-radius:3px;}
+.time-slider-wrap{margin-top:18px;}
+.time-slider-wrap input[type=range]{width:100%; accent-color:var(--accent);}
+.time-slider-labels{display:flex; justify-content:space-between; font-size:10.5px; color:var(--muted-2); margin-top:4px;}
+
+/* ---------- Reports ---------- */
+.report-top{display:flex; gap:12px; align-items:flex-end; margin-bottom:20px; flex-wrap:wrap;}
+.report-top .filter-field{margin-bottom:0; min-width:190px;}
+.gen-btn{background:var(--accent); color:#04101C; border:none; font-weight:600; padding:10px 18px; border-radius:7px; font-size:12.5px;}
+.report-card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:20px; margin-bottom:20px;}
+.report-card-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;}
+.report-card-head h3{font-family:var(--disp); font-size:16px;}
+.export-row{display:flex; gap:10px;}
+.btn-export{background:var(--panel-2); border:1px solid var(--border); color:var(--text); padding:8px 14px; border-radius:7px; font-size:12px; font-weight:500;}
+.btn-export:hover{border-color:var(--accent); color:var(--accent);}
+.report-stats{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:16px;}
+.report-stats .s{background:var(--panel-2); border-radius:8px; padding:12px 14px;}
+.report-stats .s .k{font-size:10.5px; color:var(--muted-2); text-transform:uppercase; margin-bottom:6px;}
+.report-stats .s .v{font-family:var(--disp); font-size:19px; font-weight:700;}
+.past-reports-list .row{display:flex; align-items:center; justify-content:space-between; padding:11px 0; border-bottom:1px solid var(--border); font-size:12.5px;}
+.past-reports-list .row:last-child{border-bottom:none;}
+.past-reports-list .row .name{font-weight:500;}
+.past-reports-list .row .meta{color:var(--muted-2); font-size:11.5px; font-family:var(--mono);}
+
+/* ---------- Devices ---------- */
+.flag-btn{background:none; border:1px solid var(--border); color:var(--muted); width:26px; height:26px; border-radius:6px; font-size:12px;}
+.flag-btn.flagged{border-color:var(--poor); color:var(--poor); background:var(--poor-dim);}
+
+/* ---------- Toast ---------- */
+#toast{position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px); background:var(--panel); border:1px solid var(--accent-dim); color:var(--text); padding:11px 18px; border-radius:9px; font-size:12.5px; opacity:0; transition:all .25s; z-index:200; display:flex; align-items:center; gap:8px; box-shadow:0 12px 30px rgba(0,0,0,0.4);}
+#toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
+
+.search-mini{background:var(--panel-2); border:1px solid var(--border); color:var(--text); padding:8px 12px; border-radius:7px; font-size:12.5px; width:220px;}
+
+@media(max-width:1100px){
+  .cards-row{grid-template-columns:repeat(2,1fr);}
+  .charts-grid{grid-template-columns:1fr;}
+  .explorer-grid{grid-template-columns:1fr;}
+  .map-shell{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN SCREEN ================= -->
+<div id="login-screen">
+  <div class="login-noise"></div>
+  <div class="login-card">
+    <div class="login-brand">
+      <span class="signal-mark"><i></i><i></i><i></i><i></i></span>
+      <span>CrowdSenseNet</span>
+    </div>
+    <div class="login-sub">Administrator &amp; Network Engineer Console</div>
+    <div class="field">
+      <label>Email or username</label>
+      <input type="text" value="e.tabi@crowdsensenet.cm">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" value="••••••••••••">
+    </div>
+    <div class="role-note">
+      <span><b>Super Admin</b> — manage accounts &amp; settings</span>
+      <span><b>Analyst</b> — view &amp; export data</span>
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Sign in</button>
+    <div class="login-foot">Access restricted to registered CrowdSenseNet administrators</div>
+  </div>
+</div>
+
+<!-- ================= APP SHELL ================= -->
+<div id="app-shell">
+  <div class="sidebar">
+    <div class="brand">
+      <span class="signal-mark"><i></i><i></i><i></i><i></i></span>
+      <span>CrowdSenseNet</span>
+    </div>
+    <div class="nav-group-label">Monitor</div>
+    <div class="nav-item active" data-view="overview"><span class="dot"></span>Overview</div>
+    <div class="nav-item" data-view="live"><span class="dot"></span>Live Data Feed</div>
+    <div class="nav-item" data-view="explorer"><span class="dot"></span>Session &amp; Reading Explorer</div>
+    <div class="nav-item" data-view="map"><span class="dot"></span>Coverage Map</div>
+    <div class="nav-group-label">Manage</div>
+    <div class="nav-item" data-view="devices"><span class="dot"></span>Devices &amp; Sessions</div>
+    <div class="nav-item" data-view="reports"><span class="dot"></span>Reports &amp; Export</div>
+    <div class="sidebar-foot">
+      <div class="acct">
+        <div class="acct-avatar">ET</div>
+        <div>
+          <div class="acct-name">Ewane Tabi</div>
+          <div class="acct-role">Super Admin</div>
+        </div>
+      </div>
+      <a class="logout-link" onclick="doLogout()">Sign out</a>
+    </div>
+  </div>
+
+  <div class="main">
+    <div class="topbar">
+      <div>
+        <h1 id="page-title">Dashboard Overview</h1>
+        <div class="sub" id="page-sub">Is the system healthy, and is new data coming in?</div>
+      </div>
+      <div class="top-right">
+        <span class="badge-role">Super Admin</span>
+        <span class="clock" id="clock">--:--:--</span>
+      </div>
+    </div>
+
+    <!-- ===== OVERVIEW ===== -->
+    <div class="view active" id="view-overview">
+      <div class="cards-row">
+        <div class="card"><div class="k">Registered devices</div><div class="v">4,812</div><div class="d up">▲ 96 this week</div></div>
+        <div class="card"><div class="k">Active sessions (24h)</div><div class="v">1,247</div><div class="d up">▲ 8.2%</div></div>
+        <div class="card"><div class="k">Readings today</div><div class="v" id="ov-readings-today">9,384</div><div class="d up">▲ live</div></div>
+        <div class="card"><div class="k">Area covered</div><div class="v">62.4%</div><div class="d down">▼ 1.1% vs last week</div></div>
+      </div>
+      <div class="charts-grid">
+        <div class="panel"><h3>Readings received per hour (last 24h)</h3><canvas id="chartHourly"></canvas></div>
+        <div class="panel"><h3>Readings by network operator</h3><canvas id="chartOperator"></canvas></div>
+        <div class="panel"><h3>Readings by coverage class</h3><canvas id="chartClass"></canvas></div>
+        <div class="panel"><h3>Upload queue — pending vs failed</h3><canvas id="chartQueue"></canvas></div>
+      </div>
+    </div>
+
+    <!-- ===== LIVE FEED ===== -->
+    <div class="view" id="view-live">
+      <div class="feed-toolbar">
+        <div class="left">
+          <div class="counter-badge"><span class="pulse-dot"></span><span id="live-counter">0</span> readings received today</div>
+          <select class="filter-mini" id="live-op-filter"><option value="all">All operators</option><option>MTN</option><option>Orange</option><option>Camtel</option><option>Nexttel</option></select>
+          <select class="filter-mini" id="live-class-filter"><option value="all">All classes</option><option>Good</option><option>Average</option><option>Poor</option><option>Insufficient</option></select>
+        </div>
+        <button class="btn-ghost" id="pause-btn" onclick="toggleLive()">Pause stream</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Time received</th><th>Device token</th><th>Readings</th><th>Operator</th><th>Approx. area</th><th>Avg. RSRP</th><th>Class</th></tr></thead>
+          <tbody id="live-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== EXPLORER ===== -->
+    <div class="view" id="view-explorer">
+      <div class="explorer-grid">
+        <div class="filter-panel">
+          <h3>Filters</h3>
+          <div class="filter-field"><label>Date range</label><input type="text" value="01 Jun 2026 – 04 Jul 2026"></div>
+          <div class="filter-field"><label>Operator</label><select><option>All operators</option><option>MTN</option><option>Orange</option><option>Camtel</option><option>Nexttel</option></select></div>
+          <div class="filter-field"><label>Coverage class</label><select><option>All classes</option><option>Good</option><option>Average</option><option>Poor</option><option>Insufficient</option></select></div>
+          <div class="filter-field"><label>Region</label><select><option>All regions</option><option>Southwest</option><option>Littoral</option><option>Centre</option><option>Northwest</option><option>West</option><option>North</option><option>Far North</option></select></div>
+          <div class="filter-field"><label>Minimum readings</label><input type="number" value="10"></div>
+          <button class="apply-btn" onclick="renderExplorer()">Apply filters</button>
+        </div>
+        <div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Session ID</th><th>Region</th><th>Operator</th><th>Readings</th><th>Avg RSRP</th><th>Class</th><th>Last updated</th></tr></thead>
+              <tbody id="explorer-tbody"></tbody>
+            </table>
+            <div class="pagination">
+              <span id="explorer-page-info">Showing 1–10 of 238 sessions</span>
+              <div class="pages" id="explorer-pages"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== COVERAGE MAP ===== -->
+    <div class="view" id="view-map">
+      <div class="map-toolbar">
+        <div class="metric-toggle" id="metric-toggle">
+          <button class="active" data-metric="RSRP">RSRP</button>
+          <button data-metric="RSRQ">RSRQ</button>
+          <button data-metric="SINR">SINR</button>
+        </div>
+        <select class="filter-mini" id="map-op-filter"><option value="all">All operators</option><option>MTN</option><option>Orange</option><option>Camtel</option><option>Nexttel</option></select>
+      </div>
+      <div class="map-shell">
+        <div class="map-canvas-wrap">
+          <svg id="cm-heatmap" viewBox="0 0 420 460" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+        <div>
+          <div class="map-legend">
+            <h4>Coverage legend</h4>
+            <div class="legend-row"><span class="legend-swatch" style="background:var(--good)"></span>Good (&gt; -95 dBm)</div>
+            <div class="legend-row"><span class="legend-swatch" style="background:var(--avg)"></span>Average (-95 to -110 dBm)</div>
+            <div class="legend-row"><span class="legend-swatch" style="background:var(--poor)"></span>Coverage hole (&lt; -110 dBm)</div>
+            <div class="legend-row"><span class="legend-swatch" style="background:var(--grey)"></span>Insufficient data</div>
+          </div>
+          <div class="time-slider-wrap">
+            <label style="font-size:11px; color:var(--muted-2); display:block; margin-bottom:6px;">Time range</label>
+            <input type="range" min="0" max="6" value="6" id="time-slider" oninput="regenHeatmap()">
+            <div class="time-slider-labels"><span>6 wks ago</span><span>This week</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DEVICES ===== -->
+    <div class="view" id="view-devices">
+      <div class="feed-toolbar">
+        <input class="search-mini" placeholder="Search device token…">
+        <select class="filter-mini"><option>All statuses</option><option>Synced</option><option>Pending</option><option>Flagged</option></select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Device token</th><th>Sessions</th><th>Last active</th><th>Model</th><th>Android</th><th>Upload status</th><th>Review</th></tr></thead>
+          <tbody id="devices-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ===== REPORTS ===== -->
+    <div class="view" id="view-reports">
+      <div class="report-top">
+        <div class="filter-field"><label>Region / zone</label><select id="report-zone"><option>Buea — Molyko</option><option>Douala — Bonabéri</option><option>Yaoundé — Mfoundi</option><option>Bamenda — Nkwen</option><option>Limbe — Mile 4</option></select></div>
+        <div class="filter-field"><label>Period</label><select><option>Last 30 days</option><option>Last 90 days</option><option>This quarter</option></select></div>
+        <button class="gen-btn" onclick="generateReport()">Generate report</button>
+      </div>
+
+      <div class="report-card" id="report-card">
+        <div class="report-card-head">
+          <h3 id="report-title">Buea — Molyko coverage report</h3>
+          <div class="export-row">
+            <button class="btn-export" onclick="fakeExport('CSV')">Export CSV</button>
+            <button class="btn-export" onclick="fakeExport('GeoJSON')">Export GeoJSON</button>
+          </div>
+        </div>
+        <div class="report-stats">
+          <div class="s"><div class="k">Total readings</div><div class="v" id="rs-total">18,204</div></div>
+          <div class="s"><div class="k">Avg RSRP</div><div class="v" id="rs-avg">-97 dBm</div></div>
+          <div class="s"><div class="k">Coverage holes</div><div class="v" id="rs-holes">3 zones</div></div>
+          <div class="s"><div class="k">Trend (30d)</div><div class="v" id="rs-trend" style="color:var(--good)">+4.1%</div></div>
+        </div>
+        <canvas id="chartReportTrend" height="70"></canvas>
+      </div>
+
+      <div class="panel">
+        <h3>Previously generated reports</h3>
+        <div class="past-reports-list" id="past-reports"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Detail slide-over -->
+<div id="overlay-mask" onclick="closeDetail()"></div>
+<div id="detail-panel">
+  <div class="detail-head">
+    <div>
+      <h3>Upload batch detail</h3>
+      <div style="font-size:11.5px; color:var(--muted-2); margin-top:3px;" id="detail-sub">—</div>
+    </div>
+    <button class="close-x" onclick="closeDetail()">✕</button>
+  </div>
+  <div class="detail-meta" id="detail-meta"></div>
+  <div style="font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:var(--muted); margin-bottom:10px;">Individual readings</div>
+  <div id="detail-readings"></div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ---------------------------------------------------------- */
+/* Simulated data generators                                   */
+/* ---------------------------------------------------------- */
+const OPERATORS = ["MTN","Orange","Camtel","Nexttel"];
+const AREAS = ["Buea – Molyko","Buea – Great Soppo","Douala – Bonabéri","Douala – Akwa","Yaoundé – Mfoundi","Yaoundé – Ngousso",
+"Bamenda – Nkwen","Bamenda – Old Town","Limbe – Mile 4","Kumba – Fiango","Bafoussam – Tamdja","Garoua – Centre",
+"Maroua – Domayo","Ngaoundéré – Bamyanga"];
+const MODELS = ["Tecno Spark 10","Infinix Hot 30","Samsung Galaxy A14","Xiaomi Redmi 12","Itel P40","Samsung Galaxy A05","Tecno Camon 20"];
+
+function rand(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function choice(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function pad(n){return n.toString().padStart(2,'0');}
+
+function classify(rsrp){
+  if(rsrp > -95) return {label:"Good", pill:"good"};
+  if(rsrp > -110) return {label:"Average", pill:"avg"};
+  return {label:"Poor", pill:"poor"};
+}
+function deviceToken(){
+  return "dev_" + Array.from({length:8},()=> "0123456789abcdef"[rand(0,15)]).join('');
+}
+function timeAgoLabel(mins){
+  if(mins < 1) return "just now";
+  if(mins < 60) return mins + " min ago";
+  return Math.floor(mins/60) + "h ago";
+}
+
+/* ---------------------------------------------------------- */
+/* Login / logout                                              */
+/* ---------------------------------------------------------- */
+function doLogin(){
+  document.getElementById('login-screen').style.display='none';
+  const shell = document.getElementById('app-shell');
+  shell.classList.add('active');
+  initDashboard();
+  showToast("Signed in as Ewane Tabi (Super Admin)");
+}
+function doLogout(){
+  document.getElementById('app-shell').classList.remove('active');
+  document.getElementById('login-screen').style.display='flex';
+}
+
+/* ---------------------------------------------------------- */
+/* Navigation                                                   */
+/* ---------------------------------------------------------- */
+const pageInfo = {
+  overview:{title:"Dashboard Overview", sub:"Is the system healthy, and is new data coming in?"},
+  live:{title:"Live Data Feed", sub:"Uploads appear here the moment they are validated and stored."},
+  explorer:{title:"Session & Reading Explorer", sub:"Search and filter everything collected so far."},
+  map:{title:"Coverage Map", sub:"Colour-coded coverage zones across the monitored regions."},
+  devices:{title:"Devices & Sessions", sub:"Health of the crowdsensing network itself, not the data it produces."},
+  reports:{title:"Reports & Export", sub:"Generate a structured report or export a raw dataset."}
+};
+document.querySelectorAll('.nav-item').forEach(item=>{
+  item.addEventListener('click', ()=>{
+    document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+    item.classList.add('active');
+    const v = item.dataset.view;
+    document.querySelectorAll('.view').forEach(s=>s.classList.remove('active'));
+    document.getElementById('view-'+v).classList.add('active');
+    document.getElementById('page-title').textContent = pageInfo[v].title;
+    document.getElementById('page-sub').textContent = pageInfo[v].sub;
+  });
+});
+
+/* ---------------------------------------------------------- */
+/* Clock                                                        */
+/* ---------------------------------------------------------- */
+function tickClock(){
+  const d = new Date();
+  document.getElementById('clock').textContent = pad(d.getHours())+":"+pad(d.getMinutes())+":"+pad(d.getSeconds())+" WAT";
+}
+setInterval(tickClock,1000);
+
+/* ---------------------------------------------------------- */
+/* Toast                                                        */
+/* ---------------------------------------------------------- */
+let toastTimer;
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>t.classList.remove('show'), 2400);
+}
+
+/* ---------------------------------------------------------- */
+/* Overview charts                                              */
+/* ---------------------------------------------------------- */
+let liveTotal = 9384;
+function initDashboard(){
+  Chart.defaults.color = '#7C8B9C';
+  Chart.defaults.font.family = "Inter";
+  Chart.defaults.borderColor = '#232D3A';
+
+  new Chart(document.getElementById('chartHourly'), {
+    type:'line',
+    data:{ labels: Array.from({length:24},(_,i)=>pad(i)+":00"),
+      datasets:[{ data: Array.from({length:24},()=>rand(120,620)), borderColor:'#3DA0FF', backgroundColor:'rgba(61,160,255,0.12)', fill:true, tension:.35, pointRadius:0, borderWidth:2 }]},
+    options:{ plugins:{legend:{display:false}}, scales:{x:{ticks:{maxTicksLimit:6}}, y:{beginAtZero:true}} }
+  });
+  new Chart(document.getElementById('chartOperator'), {
+    type:'doughnut',
+    data:{ labels:OPERATORS, datasets:[{ data:[41,33,17,9], backgroundColor:['#3DA0FF','#F2B84B','#33C77E','#5B6B7C'], borderColor:'#121822', borderWidth:3 }]},
+    options:{ plugins:{legend:{position:'bottom', labels:{boxWidth:10, padding:14, font:{size:11}}}} }
+  });
+  new Chart(document.getElementById('chartClass'), {
+    type:'bar',
+    data:{ labels:['Good','Average','Poor','Insufficient'], datasets:[{ data:[4820,3110,1080,374], backgroundColor:['#33C77E','#F2B84B','#F0554F','#5B6B7C'], borderRadius:5 }]},
+    options:{ plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true}} }
+  });
+  new Chart(document.getElementById('chartQueue'), {
+    type:'bar',
+    data:{ labels:['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      datasets:[
+        {label:'Pending', data:[12,9,14,7,10,18,8], backgroundColor:'#F2B84B', borderRadius:4},
+        {label:'Failed', data:[2,1,3,0,1,4,1], backgroundColor:'#F0554F', borderRadius:4}
+      ]},
+    options:{ plugins:{legend:{position:'bottom', labels:{boxWidth:10, font:{size:11}}}}, scales:{x:{stacked:true}, y:{stacked:true, beginAtZero:true}} }
+  });
+
+  buildLiveFeedSeed();
+  startLiveStream();
+  renderExplorer();
+  buildHeatmap();
+  buildDevices();
+  buildPastReports();
+  new Chart(document.getElementById('chartReportTrend'), {
+    type:'line',
+    data:{ labels:Array.from({length:12},(_,i)=>"Wk "+(i+1)),
+      datasets:[{ data:Array.from({length:12},()=>rand(-108,-90)), borderColor:'#33C77E', backgroundColor:'rgba(51,199,126,0.1)', fill:true, tension:.3, pointRadius:0, borderWidth:2 }]},
+    options:{ plugins:{legend:{display:false}}, scales:{y:{title:{display:true,text:'Avg RSRP (dBm)',color:'#57677A',font:{size:10}}}} }
+  });
+}
+
+/* ---------------------------------------------------------- */
+/* Live feed                                                    */
+/* ---------------------------------------------------------- */
+let liveRunning = true;
+let liveInterval;
+let currentBatches = {};
+let batchSeq = 1;
+
+function makeBatch(){
+  const op = choice(OPERATORS);
+  const area = choice(AREAS);
+  const readingCount = rand(3,22);
+  const avgRsrp = rand(-125,-78);
+  const cls = classify(avgRsrp);
+  const id = "b"+(batchSeq++);
+  currentBatches[id] = {
+    id, time:new Date(), token:deviceToken(), readingCount, op, area, avgRsrp, cls,
+    readings: Array.from({length:readingCount},()=>({
+      rsrp: rand(-125,-78), rsrq: rand(-19,-4), sinr: rand(-4,28), rssi: rand(-100,-55),
+      cellId: rand(10000,99999), netType: choice(["LTE","LTE","LTE","UMTS","HSPA+"]),
+      lat:(4+Math.random()*7).toFixed(5), lng:(9+Math.random()*7).toFixed(5), acc:rand(3,15)
+    }))
+  };
+  return currentBatches[id];
+}
+
+function buildLiveFeedSeed(){
+  const tbody = document.getElementById('live-tbody');
+  tbody.innerHTML='';
+  for(let i=0;i<14;i++){
+    const b = makeBatch();
+    b.time = new Date(Date.now() - i*rand(20,240)*1000);
+    tbody.appendChild(rowForBatch(b,false));
+  }
+}
+function rowForBatch(b, animate){
+  const tr = document.createElement('tr');
+  if(animate) tr.classList.add('row-new');
+  tr.dataset.id = b.id;
+  tr.innerHTML = `
+    <td>${timeAgoLabel(Math.round((Date.now()-b.time)/60000))}</td>
+    <td>${b.token}</td>
+    <td>${b.readingCount}</td>
+    <td>${b.op}</td>
+    <td>${b.area}</td>
+    <td>${b.avgRsrp} dBm</td>
+    <td><span class="pill ${b.cls.pill}">${b.cls.label}</span></td>`;
+  tr.addEventListener('click', ()=>openDetail(b.id));
+  return tr;
+}
+function startLiveStream(){
+  liveInterval = setInterval(()=>{
+    if(!liveRunning) return;
+    const b = makeBatch();
+    const tbody = document.getElementById('live-tbody');
+    tbody.insertBefore(rowForBatch(b,true), tbody.firstChild);
+    if(tbody.children.length > 30) tbody.removeChild(tbody.lastChild);
+    liveTotal += b.readingCount;
+    document.getElementById('live-counter').textContent = liveTotal.toLocaleString();
+    document.getElementById('ov-readings-today').textContent = liveTotal.toLocaleString();
+  }, 3200);
+}
+function toggleLive(){
+  liveRunning = !liveRunning;
+  const btn = document.getElementById('pause-btn');
+  btn.textContent = liveRunning ? "Pause stream" : "Resume stream";
+  btn.classList.toggle('on', !liveRunning);
+}
+
+/* ---------------------------------------------------------- */
+/* Detail slide-over                                            */
+/* ---------------------------------------------------------- */
+function openDetail(id){
+  const b = currentBatches[id];
+  if(!b) return;
+  document.getElementById('detail-sub').textContent = b.time.toLocaleString() + " · " + b.area;
+  document.getElementById('detail-meta').innerHTML = `
+    <div><span>Device token</span>${b.token}</div>
+    <div><span>Operator</span>${b.op}</div>
+    <div><span>Reading count</span>${b.readingCount}</div>
+    <div><span>Coverage class</span><span class="pill ${b.cls.pill}">${b.cls.label}</span></div>`;
+  document.getElementById('detail-readings').innerHTML = b.readings.map(r=>`
+    <div class="reading-item">
+      <div class="row1"><span>RSRP ${r.rsrp} dBm</span><span>${r.netType}</span></div>
+      <div class="row2">RSRQ ${r.rsrq} dB · SINR ${r.sinr} dB · RSSI ${r.rssi} dBm · Cell ${r.cellId}<br>
+      ${r.lat}, ${r.lng} · GPS ±${r.acc}m</div>
+    </div>`).join('');
+  document.getElementById('overlay-mask').classList.add('show');
+  document.getElementById('detail-panel').classList.add('show');
+}
+function closeDetail(){
+  document.getElementById('overlay-mask').classList.remove('show');
+  document.getElementById('detail-panel').classList.remove('show');
+}
+
+/* ---------------------------------------------------------- */
+/* Explorer                                                      */
+/* ---------------------------------------------------------- */
+const REGIONS = ["Southwest","Littoral","Centre","Northwest","West","North","Far North"];
+let explorerData = [];
+for(let i=0;i<40;i++){
+  const avgRsrp = rand(-124,-78);
+  explorerData.push({
+    id:"ses_"+(30000+i), region:choice(REGIONS), op:choice(OPERATORS),
+    count:rand(8,340), avgRsrp, cls:classify(avgRsrp),
+    updated: `${pad(rand(1,28))} Jun 2026`
+  });
+}
+function renderExplorer(){
+  const tbody = document.getElementById('explorer-tbody');
+  tbody.innerHTML = explorerData.slice(0,10).map(s=>`
+    <tr>
+      <td>${s.id}</td><td>${s.region}</td><td>${s.op}</td><td>${s.count}</td>
+      <td>${s.avgRsrp} dBm</td><td><span class="pill ${s.cls.pill}">${s.cls.label}</span></td><td>${s.updated}</td>
+    </tr>`).join('');
+  const pages = document.getElementById('explorer-pages');
+  pages.innerHTML='';
+  for(let i=1;i<=5;i++){
+    const b = document.createElement('div');
+    b.className = 'page-btn' + (i===1 ? ' active':'');
+    b.textContent = i;
+    pages.appendChild(b);
+  }
+}
+
+/* ---------------------------------------------------------- */
+/* Coverage heatmap (simulated grid over stylised silhouette)   */
+/* ---------------------------------------------------------- */
+const CM_PATH = "M120,10 C180,5 230,30 250,55 C280,45 320,60 330,95 C345,120 340,150 360,175 " +
+"C380,200 375,240 355,265 C365,300 350,330 320,345 C325,375 300,400 265,405 " +
+"C260,430 225,450 190,440 C160,455 120,445 105,415 C75,410 55,385 60,355 " +
+"C35,340 25,305 45,275 C25,250 30,210 55,190 C40,160 55,125 90,115 C85,85 95,50 120,10 Z";
+const townMarkers = [
+  {name:"Buea",x:118,y:210},{name:"Douala",x:150,y:190},{name:"Yaoundé",x:210,y:230},
+  {name:"Bamenda",x:150,y:120},{name:"Garoua",x:250,y:70},{name:"Maroua",x:270,y:30}
+];
+let gridCells = [];
+function buildHeatmap(){
+  const svg = document.getElementById('cm-heatmap');
+  svg.innerHTML = `
+    <defs><clipPath id="cmClip"><path d="${CM_PATH}"/></clipPath></defs>
+    <path d="${CM_PATH}" fill="#0D131B" stroke="#2C3A4B" stroke-width="2"/>
+    <g id="cm-grid" clip-path="url(#cmClip)"></g>
+    <path d="${CM_PATH}" fill="none" stroke="#2C3A4B" stroke-width="2"/>
+  `;
+  const grid = document.getElementById('cm-grid');
+  const cell = 18;
+  gridCells = [];
+  for(let x=0; x<420; x+=cell){
+    for(let y=0; y<460; y+=cell){
+      const r = document.createElementNS("http://www.w3.org/2000/svg","rect");
+      r.setAttribute("x",x); r.setAttribute("y",y);
+      r.setAttribute("width",cell-2); r.setAttribute("height",cell-2);
+      r.setAttribute("rx",3);
+      grid.appendChild(r);
+      gridCells.push(r);
+    }
+  }
+  townMarkers.forEach(t=>{
+    const c = document.createElementNS("http://www.w3.org/2000/svg","circle");
+    c.setAttribute("cx",t.x); c.setAttribute("cy",t.y); c.setAttribute("r",3.4);
+    c.setAttribute("fill","#E7EDF4"); c.setAttribute("stroke","#0A0E13"); c.setAttribute("stroke-width","1.5");
+    svg.appendChild(c);
+    const label = document.createElementNS("http://www.w3.org/2000/svg","text");
+    label.setAttribute("x",t.x+6); label.setAttribute("y",t.y+4);
+    label.setAttribute("fill","#E7EDF4"); label.setAttribute("font-size","10.5"); label.setAttribute("font-family","Inter");
+    label.textContent = t.name;
+    svg.appendChild(label);
+  });
+  regenHeatmap();
+}
+function colorFor(v){
+  if(v > 0.62) return "#33C77E";
+  if(v > 0.34) return "#F2B84B";
+  if(v > 0.14) return "#F0554F";
+  return "#232D3A";
+}
+function regenHeatmap(){
+  gridCells.forEach(r=>{
+    const v = Math.random();
+    r.setAttribute("fill", colorFor(v));
+    r.setAttribute("opacity", 0.55 + Math.random()*0.4);
+  });
+}
+document.getElementById('metric-toggle').addEventListener('click', e=>{
+  if(e.target.tagName !== 'BUTTON') return;
+  document.querySelectorAll('#metric-toggle button').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  regenHeatmap();
+});
+document.getElementById('map-op-filter').addEventListener('change', regenHeatmap);
+
+/* ---------------------------------------------------------- */
+/* Devices                                                       */
+/* ---------------------------------------------------------- */
+function buildDevices(){
+  const tbody = document.getElementById('devices-tbody');
+  const rows = [];
+  for(let i=0;i<16;i++){
+    const flagged = Math.random() < 0.15;
+    const status = flagged ? 'Flagged' : choice(['Synced','Synced','Synced','Pending']);
+    const pillClass = status==='Synced' ? 'good' : status==='Pending' ? 'avg' : 'poor';
+    rows.push(`<tr>
+      <td>${deviceToken()}</td>
+      <td>${rand(1,58)}</td>
+      <td>${timeAgoLabel(rand(1,4000))}</td>
+      <td class="mono-dim">${choice(MODELS)}</td>
+      <td>${choice(['11','12','13','14'])}</td>
+      <td><span class="pill ${pillClass}">${status}</span></td>
+      <td><button class="flag-btn ${flagged?'flagged':''}" onclick="this.classList.toggle('flagged'); showToast(this.classList.contains('flagged') ? 'Device flagged for review' : 'Flag cleared')">⚑</button></td>
+    </tr>`);
+  }
+  tbody.innerHTML = rows.join('');
+}
+
+/* ---------------------------------------------------------- */
+/* Reports                                                       */
+/* ---------------------------------------------------------- */
+function generateReport(){
+  const zone = document.getElementById('report-zone').value;
+  document.getElementById('report-title').textContent = zone + " coverage report";
+  document.getElementById('rs-total').textContent = rand(4000,22000).toLocaleString();
+  document.getElementById('rs-avg').textContent = rand(-112,-88) + " dBm";
+  document.getElementById('rs-holes').textContent = rand(0,6) + " zones";
+  const trend = (Math.random()*8 - 3).toFixed(1);
+  const el = document.getElementById('rs-trend');
+  el.textContent = (trend>=0?'+':'') + trend + "%";
+  el.style.color = trend>=0 ? 'var(--good)' : 'var(--poor)';
+  showToast("Report generated for " + zone);
+}
+function buildPastReports(){
+  const list = document.getElementById('past-reports');
+  const zones = ["Buea — Molyko","Douala — Bonabéri","Yaoundé — Mfoundi","Bamenda — Nkwen","Kumba — Fiango"];
+  list.innerHTML = zones.map((z,i)=>`
+    <div class="row">
+      <div><div class="name">${z} coverage report</div><div class="meta">Generated ${pad(20-i*3)} Jun 2026 · Ewane Tabi</div></div>
+      <div class="export-row">
+        <button class="btn-export" onclick="fakeExport('CSV')">CSV</button>
+        <button class="btn-export" onclick="fakeExport('GeoJSON')">GeoJSON</button>
+      </div>
+    </div>`).join('');
+}
+function fakeExport(type){
+  showToast(type + " export ready for download");
+}
+</script>
+</body>
+</html>
