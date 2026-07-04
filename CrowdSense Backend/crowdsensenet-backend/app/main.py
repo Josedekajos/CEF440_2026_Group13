@@ -1,5 +1,8 @@
+import os
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+import uvicorn
 from app.database import engine, Base
 from app.routers import devices, sessions, readings, coverage, stats
 
@@ -31,3 +34,8 @@ app.include_router(stats.router, prefix="/api")
 @app.get("/")
 def root():
     return {"message": "CrowdSenseNet API is running", "version": "1.0.0"}
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))
+    uvicorn.run("app.main:app", host="0.0.0.0", port=port)
